@@ -1,20 +1,19 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8
 
-import datetime
 import json
 import logging
 import random
-import pymongo
 
 from flask import Flask
 from flask import request
 
 application = Flask(__name__)
 
-mongoConnection = pymongo.MongoClient("mongodb://localhost:27017/test_db", maxPoolSize=100)
+db = {}
 
 # --- DEFAULT HANDLER ---
+
 
 def default_handler(api_handler):
     try:
@@ -24,7 +23,9 @@ def default_handler(api_handler):
         if not form:
             raise Exception('form is missing')
 
-        logging.debug('form: %s' % json.dumps(form, indent=2, ensure_ascii=False))
+        logging.debug(
+            'form: %s' % json.dumps(form, indent=2, ensure_ascii=False)
+        )
 
         uuid = request.args.get('uuid')
         if not uuid:
@@ -32,10 +33,7 @@ def default_handler(api_handler):
 
         # --- handling ---
 
-        global mongoConnection
-        db = mongoConnection.test_db
-
-        # TODO: Workround. 
+        # TODO: Workround.
         # InvalidDocument: key u'requirements.smoking' must not contain '.'
         for slot, value in form.items():
             if slot.find('.'):
@@ -43,6 +41,7 @@ def default_handler(api_handler):
                 slot = slot.replace('.', '__')
                 form[slot] = value
 
+        global db
         response = api_handler(db, form, uuid)
 
         for slot, value in form.items():
@@ -57,13 +56,22 @@ def default_handler(api_handler):
 
         logging.debug("response: %s" % response)
 
-        return response, 200, {'Access-Control-Allow-Origin': '*', 'X-Content-Type-Options': 'nosniff', 'Content-Type': 'application/json'}
+        return response, 200, {
+            'Access-Control-Allow-Origin': '*',
+            'X-Content-Type-Options': 'nosniff',
+            'Content-Type': 'application/json'
+        }
 
     except Exception as exc:
         logging.exception(exc)
-        return "Server error", 500, {'Access-Control-Allow-Origin': '*', 'X-Content-Type-Options': 'nosniff', 'Content-Type': 'text/plain'}
+        return "Server error", 500, {
+            'Access-Control-Allow-Origin': '*',
+            'X-Content-Type-Options': 'nosniff',
+            'Content-Type': 'text/plain'
+        }
 
 # --- HANDLERS ---
+
 
 @application.route('/order_taxi', methods=["POST", "GET"])
 def order_taxi():
@@ -81,6 +89,7 @@ def cancel_order_taxi():
 
 
 # --- API ---
+
 
 def api_order_taxi(db, form, uuid):
         location_from = form['location_from']
@@ -105,14 +114,11 @@ def api_order_taxi(db, form, uuid):
                     "id": "error__there_are_no_free_cars",
                     "form": form
                 }]
-            }            
+            }
 
         # --- ordering taxi ---
 
-        form['uuid'] = uuid
-        db.taxi.insert(form)
-        del form["_id"]
-        del form['uuid']
+        db[uuid] = form
 
         return {
             "actions": [{
@@ -129,9 +135,9 @@ def api_get_status_taxi(db, form, uuid):
 
         # --- ordering taxi ---
 
-        form = db.taxi.find_one({"uuid": uuid})
+        form = db.get(uuid)
 
-        if not form:
+        if form is None:
             return {
                 "actions": [{
                     "action": "nlg",
@@ -141,9 +147,6 @@ def api_get_status_taxi(db, form, uuid):
                     "action": "reset"
                 }]
             }
-
-        del form["_id"]
-        del form['uuid']
 
         if random.random() < 0.5:
             form['number'] = u'у123ух45'
@@ -173,9 +176,9 @@ def api_cancel_order_taxi(db, form, uuid):
 
         # --- ordering taxi ---
 
-        form = db.taxi.find_one({"uuid": uuid})
+        form = db.get(uuid)
 
-        if not form:
+        if form is None:
             return {
                 "actions": [{
                     "action": "nlg",
@@ -186,8 +189,7 @@ def api_cancel_order_taxi(db, form, uuid):
                 }]
             }
 
-        del form["_id"]
-        del form['uuid']
+        del db[uuid]
 
         return {
             "actions": [{
@@ -205,5 +207,5 @@ def ping():
     return "1", 200, {'Content-Type': 'text/plain'}
 
 
-if __name__ == '__main__':        
+if __name__ == '__main__':
     application.run(host="::", port=7777, debug=True)
