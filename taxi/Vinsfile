@@ -1,0 +1,119 @@
+{
+  "app": {
+    "comment": "add your comment here", 
+    "vins_url": "<enter your vins url here>", 
+    "api_key": "<enter your api key here>", 
+    "tokens": {
+      "admin": "bc7ad2440f5a0daf5a1ee8ea4cdb295302fa30f6fcb05b72d5f2ff27b1b5af2f", 
+      "client": "c32cc09e328182c99627f0087cba3f0a8984d2fdf77884642e4689052b316ef7"
+    }, 
+    "app_id": "64eb901a-01a3-11e6-8eeb-ed8c7aa31d24"
+  }, 
+  "dm": {
+    "engine": "form_filler", 
+    "intents": [
+      {
+        "path": "intents/dont_understand.js", 
+        "intent": "dont_understand"
+      }, 
+      {
+        "path": "intents/greeting.js", 
+        "intent": "greeting"
+      }, 
+      {
+        "path": "intents/thanks.js", 
+        "intent": "thanks"
+      }, 
+      {
+        "path": "intents/goodbye.js", 
+        "intent": "goodbye"
+      }, 
+      {
+        "path": "intents/how_are_you.js", 
+        "intent": "how_are_you"
+      }, 
+      {
+        "path": "intents/order_taxi.js", 
+        "intent": "order_taxi"
+      }, 
+      {
+        "path": "intents/get_status_taxi.js", 
+        "intent": "get_status_taxi"
+      }, 
+      {
+        "path": "intents/cancel_taxi.js", 
+        "intent": "cancel_taxi"
+      }
+    ]
+  }, 
+  "nlu": {
+    "engine": "fuzzy", 
+    "intents": [
+      {
+        "path": "nlu/greeting.nlu", 
+        "intent": "greeting"
+      }, 
+      {
+        "path": "nlu/thanks.nlu", 
+        "intent": "thanks"
+      }, 
+      {
+        "path": "nlu/goodbye.nlu", 
+        "intent": "goodbye"
+      }, 
+      {
+        "path": "nlu/how_are_you.nlu", 
+        "intent": "how_are_you"
+      }, 
+      {
+        "path": "nlu/order_taxi.nlu", 
+        "intent": "order_taxi"
+      }, 
+      {
+        "path": "nlu/get_status_taxi.nlu", 
+        "intent": "get_status_taxi"
+      }, 
+      {
+        "path": "nlu/cancel_taxi.nlu", 
+        "intent": "cancel_taxi"
+      }
+    ]
+  }, 
+  "nlg": {
+    "engine": "fuzzy", 
+    "intents": [
+      {
+        "path": "nlg/dont_understand.nlg", 
+        "intent": "dont_understand"
+      }, 
+      {
+        "path": "nlg/greeting.nlg", 
+        "intent": "greeting"
+      }, 
+      {
+        "path": "nlg/thanks.nlg", 
+        "intent": "thanks"
+      }, 
+      {
+        "path": "nlg/goodbye.nlg", 
+        "intent": "goodbye"
+      }, 
+      {
+        "path": "nlg/how_are_you.nlg", 
+        "intent": "how_are_you"
+      }, 
+      {
+        "path": "nlg/order_taxi.nlg", 
+        "intent": "order_taxi"
+      }, 
+      {
+        "path": "nlg/get_status_taxi.nlg", 
+        "intent": "get_status_taxi"
+      }, 
+      {
+        "path": "nlg/cancel_taxi.nlg", 
+        "intent": "cancel_taxi"
+      }
+    ]
+  }
+}
